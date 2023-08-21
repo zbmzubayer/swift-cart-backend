@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,150 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------
+// Model Definition
+// ------------------------------------------------------
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String   @unique
+  gender    String
+  dob       DateTime
+  address   String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Customer {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  phone     String    @unique
+  gender    String?
+  dob       DateTime?
+  address   String?
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  orders    Order[]
+  reviews   Review[]
+
+  @@map("customers")
+}
+
+model Seller {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  phone     String    @unique
+  gender    String
+  dob       DateTime
+  address   String
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@map("sellers")
+}
+
+model Product {
+  id            String      @id @default(uuid())
+  image         String
+  url           String      @unique
+  code          String      @unique
+  name          String
+  description   String
+  price         Float
+  stock         Int
+  waranty       String
+  subcategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  subCategoryId String
+  Seller        Seller      @relation(fields: [sellerId], references: [id])
+  sellerId      String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderItems    OrderItem[]
+  reviews       Review[]
+
+  @@index([subCategoryId, sellerId, createdAt])
+  @@map("products")
+}
+
+model Category {
+  id            String        @id @default(uuid())
+  name          String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  subCategories SubCategory[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id         String    @id @default(uuid())
+  name       String    @unique
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  products   Product[]
+
+  @@index([categoryId])
+  @@map("subCategories")
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  status      String
+  phone       String
+  address     String
+  total       Float
+  deliveredAt DateTime?
+  customer    Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([customerId, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  quantity   Int
+  orderPrice Float
+  itemTotal  Float
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([orderId, productId, createdAt])
+  @@map("orderItems")
+}
+
+model Review {
+  id         String    @id @default(uuid())
+  comment    String
+  rating     Float
+  product    Product   @relation(fields: [productId], references: [id])
+  productId  String
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([productId, customerId, createdAt])
+  @@map("reviews")
 }
