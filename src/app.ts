@@ -1,6 +1,8 @@
 import compression from 'compression';
 import cors from 'cors';
-import express, { Application } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
+import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import router from './app/routes';
 
 const app: Application = express();
 
@@ -15,6 +17,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // routes
-app.use('/', (req, res) => res.send('Hello World!'));
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello World!');
+});
+app.use('/api/v1', router);
+
+// error handler
+app.use(globalErrorHandler);
+
+// Handle not found routes
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(404).json({
+    success: false,
+    message: 'API route not found',
+    errorMessages: [
+      {
+        path: req.originalUrl,
+        message: `Can't find ${req.originalUrl} on this server!`,
+      },
+    ],
+  });
+  next();
+});
 
 export default app;
