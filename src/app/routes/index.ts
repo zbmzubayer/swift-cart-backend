@@ -1,6 +1,11 @@
 import { Router } from 'express';
+import { adminRouter } from '../modules/admin/admin.route';
 import { categoryRouter } from '../modules/category/category.route';
 import { customerRouter } from '../modules/customer/customer.route';
+import { orderRouter } from '../modules/order/order.route';
+import { productRouter } from '../modules/product/product.route';
+import { reviewRouter } from '../modules/review/review.route';
+import { sellerRouter } from '../modules/seller/seller.route';
 import { subCategoryRouter } from '../modules/sub-category/sub-category.route';
 
 type ModuleRoute = {
@@ -12,8 +17,16 @@ const router = Router();
 
 const moduleRoutes: ModuleRoute[] = [
   {
+    path: '/admin',
+    routes: adminRouter,
+  },
+  {
     path: '/customer',
     routes: customerRouter,
+  },
+  {
+    path: '/seller',
+    routes: sellerRouter,
   },
   {
     path: '/category',
@@ -22,6 +35,18 @@ const moduleRoutes: ModuleRoute[] = [
   {
     path: '/sub-category',
     routes: subCategoryRouter,
+  },
+  {
+    path: '/product',
+    routes: productRouter,
+  },
+  {
+    path: '/order',
+    routes: orderRouter,
+  },
+  {
+    path: '/review',
+    routes: reviewRouter,
   },
 ];
 

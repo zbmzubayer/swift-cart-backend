@@ -10,13 +10,34 @@ datasource db {
 // ------------------------------------------------------
 // Model Definition
 // ------------------------------------------------------
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+enum ProductStatus {
+  New
+  Used
+  Refurbished
+}
+
+enum OrderStatus {
+  Pending
+  Processing
+  Delivered
+  Cancelled
+  Refunded
+  Failed
+}
+
 model Admin {
   id        String   @id @default(uuid())
-  name      String
+  image     String
   email     String   @unique
   phone     String   @unique
-  gender    String
-  dob       DateTime
+  gender    Gender
+  dob       DateTime @db.Date
   address   String
   password  String
   createdAt DateTime @default(now())
@@ -27,11 +48,12 @@ model Admin {
 
 model Customer {
   id        String    @id @default(uuid())
+  image     String?
   name      String
   email     String    @unique
   phone     String    @unique
-  gender    String?
-  dob       DateTime?
+  gender    Gender?
+  dob       DateTime? @db.Date
   address   String?
   password  String
   createdAt DateTime  @default(now())
@@ -43,40 +65,47 @@ model Customer {
 }
 
 model Seller {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  phone     String    @unique
-  gender    String
-  dob       DateTime
-  address   String
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
+  id             String    @id @default(uuid())
+  image          String
+  name           String
+  email          String    @unique
+  phone          String    @unique
+  gender         Gender
+  dob            DateTime  @db.Date
+  address        String
+  companyName    String    @unique
+  companyLogo    String
+  companyAddress String
+  password       String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  products       Product[]
 
   @@map("sellers")
 }
 
 model Product {
-  id            String      @id @default(uuid())
+  id            String        @id @default(uuid())
   image         String
-  url           String      @unique
-  code          String      @unique
+  url           String        @unique
   name          String
   description   String
   price         Float
   stock         Int
-  waranty       String
-  subcategory   SubCategory @relation(fields: [subCategoryId], references: [id])
+  soldCount     Int           @default(0)
+  status        ProductStatus
+  warranty      String
+  subCategory   SubCategory   @relation(fields: [subCategoryId], references: [id])
   subCategoryId String
-  Seller        Seller      @relation(fields: [sellerId], references: [id])
+  seller        Seller        @relation(fields: [sellerId], references: [id])
   sellerId      String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   orderItems    OrderItem[]
   reviews       Review[]
 
+  @@unique([name, sellerId]) // one seller can't have two products with same name
   @@index([subCategoryId, sellerId, createdAt])
   @@map("products")
 }
@@ -107,10 +136,10 @@ model SubCategory {
 model Order {
   id          String      @id @default(uuid())
   code        String      @unique
-  status      String
+  status      OrderStatus @default(Pending)
   phone       String
   address     String
-  total       Float
+  total       Float       @default(0)
   deliveredAt DateTime?
   customer    Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
   customerId  String?

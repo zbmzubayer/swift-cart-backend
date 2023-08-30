@@ -1,4 +1,4 @@
-import { Category } from '@prisma/client';
+import { Category, Prisma } from '@prisma/client';
 import prisma from '../../../client';
 import {
   PaginationOptions,
@@ -19,7 +19,10 @@ const getAll = async (
   paginationOptions: PaginationOptions
 ): Promise<PaginationResult<Category[]>> => {
   const { page, take, skip, sortBy, order } = calculatePagination(paginationOptions);
+  console.log(search);
   const { searchTerm, ...filterFields } = search;
+  console.log(searchTerm);
+  console.log(filterFields);
   const searchFields = categorySearchFields;
   // sorting
   const sortCondition: { [key: string]: 'asc' | 'desc' } = {};
@@ -43,7 +46,7 @@ const getAll = async (
     }));
   }
   // where condition
-  let whereCondition = {};
+  let whereCondition: Prisma.CategoryWhereInput = {};
   if (searchConditions.length && filterConditions.length) {
     whereCondition = { AND: filterConditions, OR: searchConditions };
   } else if (searchConditions.length && !filterConditions.length) {
