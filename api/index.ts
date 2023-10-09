@@ -1,3 +1,3 @@
-import app from '../src/app';
+import bootstrap from '../src/server';
 
-export default app;
+export default bootstrap;
