@@ -6,7 +6,7 @@ const server: Server = createServer(app);
 
 async function bootstrap() {
   try {
-    server.listen(config.PORT, () => {
+    app.listen(config.PORT, () => {
       console.log(`🚀 Server is listening on port ${config.PORT}`);
     });
   } catch (error) {
@@ -16,4 +16,6 @@ async function bootstrap() {
 
 bootstrap();
 
-export default bootstrap;
+export default app;
+
+// export default bootstrap;
