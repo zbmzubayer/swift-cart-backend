@@ -2,14 +2,14 @@
   "name": "swift-cart-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": ""
+    "build": "tsc"
   },
   "keywords": [],
-  "author": "",
+  "author": "Zubayer Bin Matin (ZBM)",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
