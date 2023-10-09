@@ -33,7 +33,6 @@ const getAll = async (
   if (searchTerm || Object.keys(filterFields).length) {
     whereCondition = getWhereCondition(searchTerm, searchFields, filterFields);
   }
-  console.log(filterFields);
   const result = await prisma.review.findMany({
     include: { customer: true, product: true },
     skip,

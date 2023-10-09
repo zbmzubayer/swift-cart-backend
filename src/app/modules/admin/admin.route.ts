@@ -5,7 +5,6 @@ import { adminZodSchema } from './admin.validation';
 
 const router = Router();
 
-router.post('/', validateRequest(adminZodSchema.create), adminController.create);
 router.get('/', adminController.getAll);
 router.get('/:id', adminController.getById);
 router.patch('/:id', validateRequest(adminZodSchema.update), adminController.update);

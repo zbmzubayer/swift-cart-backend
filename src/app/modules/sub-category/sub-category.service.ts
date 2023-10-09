@@ -1,4 +1,4 @@
-import { SubCategory } from '@prisma/client';
+import { Prisma, SubCategory } from '@prisma/client';
 import prisma from '../../../client';
 import {
   PaginationOptions,
@@ -29,7 +29,7 @@ const getAll = async (
   } else {
     sortCondition['name'] = 'asc'; // default sorting
   }
-  let whereCondition = {};
+  let whereCondition: Prisma.SubCategoryWhereInput = {};
   if (searchTerm || Object.keys(filterFields).length) {
     whereCondition = getWhereCondition(searchTerm, searchFields, filterFields);
   }

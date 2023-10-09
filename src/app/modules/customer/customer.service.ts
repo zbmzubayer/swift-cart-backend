@@ -9,12 +9,6 @@ import { getWhereCondition } from '../../helpers/searchFilter';
 import { ApiError } from '../../middlewares/globalErrorHandler';
 import { customerSearchFields } from './customer.constant';
 
-// CRUD
-const create = async (data: Customer): Promise<Customer> => {
-  const result = prisma.customer.create({ data });
-  return result;
-};
-
 const getAll = async (
   search: { searchTerm?: string },
   paginationOptions: PaginationOptions
@@ -34,11 +28,15 @@ const getAll = async (
     whereCondition = getWhereCondition(searchTerm, searchFields, filterFields);
   }
   const result = await prisma.customer.findMany({
-    include: { orders: true, reviews: true },
     skip,
     take,
     orderBy: [sortCondition],
     where: whereCondition,
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+      orders: true,
+      reviews: true,
+    },
   });
   const total = await prisma.customer.count({ where: whereCondition });
   return { meta: { page, limit: take, total }, data: result };
@@ -46,8 +44,12 @@ const getAll = async (
 
 const getById = async (id: string): Promise<Customer | null> => {
   const result = await prisma.customer.findUnique({
-    include: { orders: true, reviews: true },
     where: { id },
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+      orders: true,
+      reviews: true,
+    },
   });
   if (!result) {
     throw new ApiError(404, 'Customer not found');
@@ -73,4 +75,4 @@ const remove = async (id: string): Promise<Customer> => {
   return result;
 };
 
-export const customerService = { create, getAll, getById, update, remove };
+export const customerService = { getAll, getById, update, remove };

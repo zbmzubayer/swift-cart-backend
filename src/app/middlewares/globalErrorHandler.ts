@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Prisma } from '@prisma/client';
 import { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import { config } from '../../config';
 import { GenericErrorMessages } from '../../shared/errorResponse';
+import prismaErrorHandler from './prismaErrorHandler';
 import zodErrorHandler from './zodErrorHandler';
 
 export class ApiError extends Error {
@@ -27,14 +29,29 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let errorMessages: GenericErrorMessages[] = [];
 
   if (err instanceof ZodError) {
-    const commonErrorMessage = zodErrorHandler(err);
-    status = commonErrorMessage.status;
-    message = commonErrorMessage.message;
-    errorMessages = commonErrorMessage.errorMessages;
+    const zodError = zodErrorHandler(err);
+    status = zodError.status;
+    message = zodError.message;
+    errorMessages = zodError.errorMessages;
   } else if (err instanceof ApiError) {
     status = err?.status;
     message = err?.message;
     errorMessages = err?.message ? [{ path: '', message: err?.message }] : [];
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    const prismaError = prismaErrorHandler(err);
+    status = prismaError.status;
+    message = prismaError.message;
+    errorMessages = prismaError.errorMessages;
+  } else if (err instanceof Error) {
+    message = err?.message;
+    errorMessages = err?.message
+      ? [
+          {
+            path: '',
+            message: err?.message,
+          },
+        ]
+      : [];
   }
 
   res.status(status).json({

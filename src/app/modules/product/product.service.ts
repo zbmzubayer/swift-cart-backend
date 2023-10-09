@@ -30,12 +30,12 @@ const getAll = async (
   } else {
     sortCondition['soldCount'] = 'desc'; // default sorting
   }
-  let whereCondition: Prisma.ProductWhereInput = { AND: [{ seller: { deletedAt: null } }] };
+  let whereCondition: Prisma.ProductWhereInput = {};
   if (searchTerm || Object.keys(filterFields).length) {
     whereCondition = getWhereCondition(searchTerm, searchFields, filterFields);
   }
   const result = await prisma.product.findMany({
-    include: { subCategory: true, seller: true, reviews: true },
+    include: { subCategory: { include: { category: true } }, seller: true, reviews: true },
     skip,
     take,
     orderBy: [sortCondition],

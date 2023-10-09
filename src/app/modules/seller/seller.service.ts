@@ -9,13 +9,6 @@ import { getWhereCondition } from '../../helpers/searchFilter';
 import { ApiError } from '../../middlewares/globalErrorHandler';
 import { sellerSearchFields } from './seller.constant';
 
-// CRUD
-const create = async (data: Seller): Promise<Seller> => {
-  data.dob = new Date(data.dob);
-  const result = prisma.seller.create({ data });
-  return result;
-};
-
 const getAll = async (
   search: { searchTerm?: string },
   paginationOptions: PaginationOptions
@@ -30,16 +23,19 @@ const getAll = async (
   } else {
     sortCondition['name'] = 'asc'; // default sorting
   }
-  let whereCondition: Prisma.SellerWhereInput = { deletedAt: null };
+  let whereCondition: Prisma.SellerWhereInput = {};
   if (searchTerm || Object.keys(filterFields).length) {
     whereCondition = getWhereCondition(searchTerm, searchFields, filterFields);
   }
   const result = await prisma.seller.findMany({
-    include: { products: true },
     skip,
     take,
     orderBy: [sortCondition],
     where: whereCondition,
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+      products: true,
+    },
   });
   const total = await prisma.seller.count({ where: whereCondition });
   return { meta: { page, limit: take, total }, data: result };
@@ -47,8 +43,11 @@ const getAll = async (
 
 const getById = async (id: string): Promise<Seller | null> => {
   const result = await prisma.seller.findUnique({
-    include: { products: true },
     where: { id },
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+      products: true,
+    },
   });
   if (!result) {
     throw new ApiError(404, 'Seller not found');
@@ -70,8 +69,8 @@ const remove = async (id: string): Promise<Seller> => {
   if (!isExist) {
     throw new ApiError(404, 'Seller not found');
   }
-  const result = await prisma.seller.update({ where: { id }, data: { deletedAt: new Date() } });
+  const result = await prisma.seller.delete({ where: { id } });
   return result;
 };
 
-export const sellerService = { create, getAll, getById, update, remove };
+export const sellerService = { getAll, getById, update, remove };

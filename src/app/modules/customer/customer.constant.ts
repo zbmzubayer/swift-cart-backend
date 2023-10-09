@@ -1,2 +1,2 @@
-export const customerSearchFields = ['name', 'email', 'phone', 'address'];
+export const customerSearchFields = ['name', 'phone', 'address'];
 export const customerFilterFields = ['searchTerm', 'name', 'gender'];

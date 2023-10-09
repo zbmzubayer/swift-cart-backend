@@ -9,12 +9,6 @@ import { getWhereCondition } from '../../helpers/searchFilter';
 import { ApiError } from '../../middlewares/globalErrorHandler';
 import { adminSearchFields } from './admin.constant';
 
-// CRUD
-const create = async (data: Admin): Promise<Admin> => {
-  const result = prisma.admin.create({ data });
-  return result;
-};
-
 const getAll = async (
   search: { searchTerm?: string },
   paginationOptions: PaginationOptions
@@ -38,6 +32,9 @@ const getAll = async (
     take,
     orderBy: [sortCondition],
     where: whereCondition,
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+    },
   });
   const total = await prisma.admin.count({ where: whereCondition });
   return { meta: { page, limit: take, total }, data: result };
@@ -46,6 +43,9 @@ const getAll = async (
 const getById = async (id: string): Promise<Admin | null> => {
   const result = await prisma.admin.findUnique({
     where: { id },
+    include: {
+      user: { select: { id: true, email: true, role: true, createdAt: true, updatedAt: true } },
+    },
   });
   if (!result) {
     throw new ApiError(404, 'Admin not found');
@@ -71,4 +71,4 @@ const remove = async (id: string): Promise<Admin> => {
   return result;
 };
 
-export const adminService = { create, getAll, getById, update, remove };
+export const adminService = { getAll, getById, update, remove };

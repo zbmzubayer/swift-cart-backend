@@ -6,22 +6,11 @@ import { paginationFields } from '../../helpers/paginationHelper';
 import { customerFilterFields } from './customer.constant';
 import { customerService } from './customer.service';
 
-const create = catchAsync(async (req, res) => {
-  const data = req.body;
-  const result = await customerService.create(data);
-  sendResponse<Customer>(res, {
-    status: 201,
-    success: true,
-    message: 'Customer created successfully',
-    data: result,
-  });
-});
-
 const getAll = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
   const filerFields = pick(req.query, customerFilterFields);
   const result = await customerService.getAll(filerFields, paginationOptions);
-  sendResponse(res, {
+  sendResponse<Customer[]>(res, {
     status: 200,
     success: true,
     message: 'Customers retrieved successfully',
@@ -64,4 +53,4 @@ const remove = catchAsync(async (req, res) => {
   });
 });
 
-export const customerController = { create, getAll, getById, update, remove };
+export const customerController = { getAll, getById, update, remove };

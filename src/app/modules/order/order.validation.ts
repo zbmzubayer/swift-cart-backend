@@ -1,6 +1,5 @@
+import { OrderStatus } from '@prisma/client';
 import { z } from 'zod';
-
-const orderStatus = ['Pending', 'Processing', 'Delivered', 'Cancelled', 'Refunded', 'Failed'];
 
 const create = z.object({
   phone: z.string().min(10).max(11),
@@ -15,7 +14,7 @@ const create = z.object({
 });
 
 const update = z.object({
-  status: z.enum([...orderStatus] as [string]).optional(),
+  status: z.enum([...Object.values(OrderStatus)] as [string]).optional(),
   phone: z.string().min(10).max(11).optional(),
   address: z.string().min(3).max(255).optional(),
   customerId: z.string().uuid().optional(),

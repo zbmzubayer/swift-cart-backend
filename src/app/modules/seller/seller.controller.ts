@@ -6,17 +6,6 @@ import { paginationFields } from '../../helpers/paginationHelper';
 import { sellerFilterFields } from './seller.constant';
 import { sellerService } from './seller.service';
 
-const create = catchAsync(async (req, res) => {
-  const data = req.body;
-  const result = await sellerService.create(data);
-  sendResponse<Seller>(res, {
-    status: 201,
-    success: true,
-    message: 'Seller created successfully',
-    data: result,
-  });
-});
-
 const getAll = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
   const filerFields = pick(req.query, sellerFilterFields);
@@ -64,4 +53,4 @@ const remove = catchAsync(async (req, res) => {
   });
 });
 
-export const sellerController = { create, getAll, getById, update, remove };
+export const sellerController = { getAll, getById, update, remove };

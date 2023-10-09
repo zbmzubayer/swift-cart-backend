@@ -19,10 +19,7 @@ const getAll = async (
   paginationOptions: PaginationOptions
 ): Promise<PaginationResult<Category[]>> => {
   const { page, take, skip, sortBy, order } = calculatePagination(paginationOptions);
-  console.log(search);
   const { searchTerm, ...filterFields } = search;
-  console.log(searchTerm);
-  console.log(filterFields);
   const searchFields = categorySearchFields;
   // sorting
   const sortCondition: { [key: string]: 'asc' | 'desc' } = {};

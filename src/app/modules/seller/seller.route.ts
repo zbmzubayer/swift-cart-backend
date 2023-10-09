@@ -5,7 +5,6 @@ import { sellerZodSchema } from './seller.validation';
 
 const router = Router();
 
-router.post('/', validateRequest(sellerZodSchema.create), sellerController.create);
 router.get('/', sellerController.getAll);
 router.get('/:id', sellerController.getById);
 router.patch('/:id', validateRequest(sellerZodSchema.update), sellerController.update);

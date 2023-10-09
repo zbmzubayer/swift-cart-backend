@@ -6,17 +6,6 @@ import { paginationFields } from '../../helpers/paginationHelper';
 import { adminFilterFields } from './admin.constant';
 import { adminService } from './admin.service';
 
-const create = catchAsync(async (req, res) => {
-  const data = req.body;
-  const result = await adminService.create(data);
-  sendResponse<Admin>(res, {
-    status: 201,
-    success: true,
-    message: 'Admin created successfully',
-    data: result,
-  });
-});
-
 const getAll = catchAsync(async (req, res) => {
   const paginationOptions = pick(req.query, paginationFields);
   const filerFields = pick(req.query, adminFilterFields);
@@ -64,4 +53,4 @@ const remove = catchAsync(async (req, res) => {
   });
 });
 
-export const adminController = { create, getAll, getById, update, remove };
+export const adminController = { getAll, getById, update, remove };
