@@ -16,4 +16,4 @@ export async function bootstrap() {
 
 bootstrap();
 
-export default server;
+export default app;
