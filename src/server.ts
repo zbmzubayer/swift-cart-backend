@@ -4,7 +4,7 @@ import { config } from './config';
 
 const server: Server = createServer(app);
 
-export default async function bootstrap() {
+export async function bootstrap() {
   try {
     server.listen(config.PORT, () => {
       console.log(`🚀 Server is listening on port ${config.PORT}`);
@@ -14,4 +14,6 @@ export default async function bootstrap() {
   }
 }
 
-// bootstrap();
+bootstrap();
+
+export default server;
