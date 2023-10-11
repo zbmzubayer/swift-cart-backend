@@ -11,4 +11,5 @@ export const config = {
     REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
   },
+  CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:5173',
 };

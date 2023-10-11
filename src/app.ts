@@ -3,11 +3,12 @@ import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import router from './app/routes';
+import { config } from './config';
 
 const app: Application = express();
 
 // cors
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: config.CLIENT_URL, credentials: true }));
 
 // compression
 app.use(compression());
